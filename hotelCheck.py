@@ -86,11 +86,11 @@ class HotelListingGUI:
         self.hotels_text = tk.Text(self.hotels_frame, height=50, width=110)
         self.hotels_text.pack(padx=5, pady=5, fill="both", expand=True)
 
-        # Mod seçme düğmesi
+        # Selecting Mode Button
         self.mode_button = ttk.Button(root, text="Dark Mode", command=self.toggle_mode)
         self.mode_button.grid(row=11, column=0, sticky="w")
 
-        # Menü çubuğu
+        # Menu Bar
         self.menu_bar = tk.Menu(root)
         self.info_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.info_menu.add_command(label="About", command=self.show_info)
@@ -134,7 +134,7 @@ class HotelListingGUI:
         if last_digit % 2 != 0:
             hotels_data.sort(key=lambda x: self.extract_rating(x['Hotel Rating']), reverse=True)
 
-        # Otelleri GUI'de göster
+        # show hotels in GUI
         self.display_hotels(hotels_data)
 
        #save into the csv file
@@ -159,7 +159,7 @@ class HotelListingGUI:
             'checkout_year': checkout_date.year,
             'checkout_month': checkout_date.month,
             'checkout_monthday': checkout_date.day,
-            'group_adults': '2',
+            'group_adults': '2', #optional person number selection.
             'no_rooms': '1',
             'b_h4u_keep_filters': '',
             'from_sf': '1',
