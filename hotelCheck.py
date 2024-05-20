@@ -10,16 +10,18 @@ import io
 from PIL import Image, ImageTk
 import urllib.request
 
-
+'''
+@author tahacolak
+'''
 class HotelListingGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Find the Best Hotel for You")
-        self.root.geometry("905x1200")  # Pencere boyutunu ayarlama
+        self.root.geometry("905x1200")  # Arranges windowSize
 
-        self.mode = "light"  # Varsayılan mod açık
+        self.mode = "light"  
 
-        # Stil nesnesi oluştur
+        
         self.style = ttk.Style()
 
         # Başlık etiketi
@@ -35,19 +37,18 @@ class HotelListingGUI:
                                         "Prague", "Istanbul", "Oslo", "Lisbon", "Dublin", "Stockholm", "Warsaw"]
         self.city_dropdown.grid(row=2, column=1, sticky="w", pady=5)
 
-        # Giriş tarihi için etiketler ve giriş kutuları
+        
         self.checkin_label = ttk.Label(root, text="    Check-in Date :")
         self.checkin_label.grid(row=3, column=0, sticky="w", pady=5)
         self.checkin_cal = DateEntry(root, width=12, borderwidth=2)
         self.checkin_cal.grid(row=3, column=1, sticky="w", pady=5)
 
-        # Çıkış tarihi için etiketler ve giriş kutuları
+      
         self.checkout_label = ttk.Label(root, text="  Check-out Date :")
         self.checkout_label.grid(row=4, column=0, sticky="w", pady=5)
         self.checkout_cal = DateEntry(root, width=12, borderwidth=2)
         self.checkout_cal.grid(row=4, column=1, sticky="w", pady=5)
 
-        # Check-in ve Check-out zamanını seçmek için düğmeler
         self.checkin_time_label = ttk.Label(root, text="   Check-in Time  :")
         self.checkin_time_label.grid(row=5, column=0, sticky="w", pady=5)
         self.checkin_time_var = tk.StringVar()
@@ -60,11 +61,11 @@ class HotelListingGUI:
         self.checkout_time_spinbox = ttk.Spinbox(root, from_=0, to=23, textvariable=self.checkout_time_var)
         self.checkout_time_spinbox.grid(row=6, column=1, sticky="w", pady=5)
 
-        # Para birimi seçmek için radyo düğmesi
+        
         self.city_label = ttk.Label(root, text="             Currency :")
         self.city_label.grid(row=7, column=0, sticky="w", pady=5)
         self.currency_var = tk.StringVar()
-        self.currency_var.set("Euro")  # Varsayılan para birimi Euro
+        self.currency_var.set("Euro")  # main currency
         self.currency_frame = ttk.LabelFrame(root, text="1 € = 30 ₺")
         self.currency_frame.grid(row=7, column=1, columnspan=2, sticky="w", pady=5)
 
@@ -73,11 +74,11 @@ class HotelListingGUI:
         self.tl_radio = ttk.Radiobutton(self.currency_frame, text="₺", variable=self.currency_var, value="TL")
         self.tl_radio.grid(row=0, column=1, padx=5, sticky="w")
 
-        # Otelleri getirme ve para birimine dönüştürme düğmeleri
+        
         self.retrieve_button = ttk.Button(root, text="Show Top Rated Hotels", command=self.retrieve_hotels)
         self.retrieve_button.grid(row=8, column=1, columnspan=2, pady=10, sticky="w")
 
-        # Otellerin listeleneceği çerçeve
+        # Hotel Listing Framework
         self.style.configure("Hotels.TLabelframe.Label", font=("Arial", 12, "bold"))
         self.hotels_frame = ttk.LabelFrame(root, text="Top 5 Hotels for You", style="Hotels.TLabelframe")
         self.hotels_frame.grid(row=10, column=0, columnspan=2, sticky="e", pady=10)
@@ -97,10 +98,10 @@ class HotelListingGUI:
         self.menu_bar.add_cascade(label="Info", menu=self.info_menu)
         self.root.config(menu=self.menu_bar)
 
-        self.set_light_mode()  # Başlangıçta modu ayarla
+        self.set_light_mode()  #
 
     def toggle_mode(self):
-        # Koyu ve açık modlar arasında geçiş yapmak için fonksiyon
+         
         if self.mode == "dark":
             self.mode = "light"
             self.set_light_mode()
@@ -109,25 +110,25 @@ class HotelListingGUI:
             self.set_dark_mode()
 
     def set_light_mode(self):
-        # Açık modu ayarlamak için fonksiyon
+       
         self.root.configure(background="darkgreen")
         self.title_label.configure(background="brown", foreground="white")
-        # Diğer widget'ları açık moda ayarla
+        
 
     def retrieve_hotels(self):
-        # Kullanıcı girişlerine dayanarak otelleri getiren fonksiyon
+        
         city_name = self.city_var.get()
         checkin_date = self.checkin_cal.get_date()
         checkout_date = self.checkout_cal.get_date()
         checkin_time = self.checkin_time_var.get()
         checkout_time = self.checkout_time_var.get()
 
-        # Giriş ve çıkış saatleriyle ilgili yapmanız gerekenleri yapın
+        
 
-        # Booking.com'dan otel verilerini çekme
+        # scrapping
         hotels_data = self.scrape_booking(city_name, checkin_date, checkout_date)
 
-        # Öğrenci kimliğinin son basamağı tek ise otelleri derecelendirmeye göre sırala
+        # sorting with descending order intı the hotel rating
         student_id = "20200601021"
         last_digit = int(student_id[-1])
         if last_digit % 2 != 0:
@@ -136,11 +137,11 @@ class HotelListingGUI:
         # Otelleri GUI'de göster
         self.display_hotels(hotels_data)
 
-        # Otel verilerini CSV dosyasına kaydet
+       #save into the csv file
         self.save_to_csv(hotels_data)
 
     def scrape_booking(self, city_name, checkin_date, checkout_date):
-        # Booking.com'dan otel verilerini çekmek için fonksiyon
+        # api usage 
         base_url = "https://www.booking.com/searchresults.en-gb.html"
         query_params = {
             'label': 'gen173nr-1FCAEoggI46AdIM1gEaOQBiAEBmAEouAEHyAEM2AEB6AEB-AELiAIBqAIDuAKmksuxBsACAdICJDkwMzNiODdlLTdmYjYtNGMxMy1hYWZjLWI5NDM5NGI3MzdhN9gCBuACAQ',
@@ -163,8 +164,8 @@ class HotelListingGUI:
             'b_h4u_keep_filters': '',
             'from_sf': '1',
             'search_pageview_id': 'e911a5e88e8f024b',
-            'order': 'class',  # Eklenen parametre
-            'selected_currency': 'EUR'  # Eklenen parametre
+            'order': 'class',  # additional parameter
+            'selected_currency': 'EUR'  # currency parameeter, euro
         }
 
         url = f"{base_url}?{requests.compat.urlencode(query_params)}"
@@ -202,13 +203,13 @@ class HotelListingGUI:
         for hotel_data in hotels_data:
             if self.currency_var.get() == "TL":  # Seçilen para biriminin TL olup olmadığını kontrol edin
                 euro_price = float(hotel_data['Price'].replace('€', '').replace(',', '').strip())
-                tl_price = euro_price * 30  # 1 Euro = 30 TL dönüşümü
+                tl_price = euro_price * 30  # 1 to 30 , conversion
                 hotel_data['Price'] = f'{tl_price:.2f} TL'
 
         return hotels_data
 
     def extract_rating(self, rating_string):
-        # Derelemeyi dize içinden çıkarıp float olarak döndüren fonksiyon
+    
         ratings = re.findall(r'\d+\.\d+', rating_string)
         if ratings:
             return float(ratings[0])
@@ -216,25 +217,25 @@ class HotelListingGUI:
             return 0.0
 
     def display_hotels(self, hotels):
-        # Otelleri GUI'de göstermek için fonksiyon
+        # displays hotel in GUI
         self.hotels_text.delete(1.0, tk.END)
 
-        # Otelleri göstermek için yeni bir çerçeve oluşturun
+        # hotel images' framework
         hotels_frame = tk.Frame(root)
         hotels_frame.grid(row=10, column=0, columnspan=2, sticky="e", pady=10)
 
         if hotels:
             for i, hotel in enumerate(hotels[:5], start=1):
-                # Otel bilgilerini metin alanına ekleyin
+                # Adding hotel infos in ino
                 self.hotels_text.insert(tk.END,
                                         f"{i}. Hotel Name: {hotel['Hotel Title']}\n"
                                         f"   Address: {hotel['Hotel Address']}\n"
                                         f"   Distance to City Center: {hotel['Distance to City Center']}\n"
                                         f"   Rating: {hotel['Hotel Rating']}\n"
                                         f"   Price: {hotel['Price']}\n\n\n",
-                                        ("custom_font",))  # custom_font etiketi stil için
+                                        ("custom_font",))                                                                                                                                                         
 
-                # Otel resimlerini yükle ve göster
+                # shows hotel images.
                 if hotel['Image URL']:
                     response = requests.get(hotel['Image URL'])
                     image_data = response.content
@@ -248,11 +249,11 @@ class HotelListingGUI:
         else:
             self.hotels_text.insert(tk.END, "There is no hotel that matched your criteria.")
 
-        # Eklenen metne özel yazı tipi uygula
+        # Hotel info wordtype
         self.hotels_text.tag_configure("custom_font", font=("Arial", 12))
 
     def save_to_csv(self, hotels):
-        # Otel verilerini bir CSV dosyasına kaydetme fonksiyonu
+        # Hotel data saving into the CSV file
         with open("hotels_data.csv", "w", newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(["Hotel Title", "Hotel Address", "Distance to City Center", "Hotel Rating", "Price"])
@@ -261,11 +262,11 @@ class HotelListingGUI:
                                  hotel['Hotel Rating'], hotel['Price']])
 
     def show_info(self):
-        # Seçilen şehir hakkında bilgi gösterme fonksiyonu
+        # this function shows info about selected city.
         selected_city = self.city_var.get()
         file_path = f"C:/Users/W10/Desktop/LECTURES-IUE/3rd Grade Lectures/2nd Grade/SE226/EuropeCountries/{selected_city}.txt"
 
-        if os.path.exists(file_path):  # Dosyanın var olup olmadığını kontrol edin
+        if os.path.exists(file_path):  # Check the whether file exists orno
             with open(file_path, "r", encoding="utf-8") as file:
                 city_info = file.read()
 
@@ -279,7 +280,7 @@ class HotelListingGUI:
             messagebox.showerror("Error", f"No information available for {selected_city}.")
 
     def open_linkedin(self):
-        # LinkedIn hesabınızı açmak için fonksiyon
+        # reach the linkedIn link with url.
         import webbrowser
         linkedin_url = "www.linkedin.com/in/colaktahayasir"
         webbrowser.open_new_tab(linkedin_url)
